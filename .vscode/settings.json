@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "mod_dht11.h": "c",
+        "stm32f1xx_ll_bus.h": "c",
+        "stm32f1xx_ll_gpio.h": "c",
+        "lib_tool.h": "c",
+        "stm32f1xx_ll_cortex.h": "c"
+    },
+    "cortex-debug.variableUseNaturalFormat": true
+}
