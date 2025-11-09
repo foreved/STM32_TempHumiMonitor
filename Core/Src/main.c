@@ -99,7 +99,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  Lib_USART_Init();
   Mod_DHT11_Task();
   /* USER CODE END 2 */
   
