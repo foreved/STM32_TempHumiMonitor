@@ -10,6 +10,7 @@
                 "./Drivers/CMSIS/Include",
                 "../com_protocol/libs/include",
                 "../com_protocol/libs/fatfs"
+                "./mylibs"
             ],
             "defines": [
                 "USE_FULL_LL_DRIVER",

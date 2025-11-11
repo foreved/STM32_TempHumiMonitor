@@ -61,9 +61,10 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
 
 # Add linked libraries
-add_subdirectory(../com_protocol/libs ${CMAKE_CURRENT_BINARY_DIR}/libs)
+add_subdirectory(./cmake/mylibs)
+
 target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
-    com_protocol
+    mylibs
     # Add user defined libraries
 )

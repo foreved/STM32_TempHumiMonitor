@@ -7,7 +7,10 @@
         "stm32f1xx_ll_cortex.h": "c",
         "lib_font.h": "c",
         "lib_usart.h": "c",
-        "mod_flash.h": "c"
+        "mod_flash.h": "c",
+        "ff.h": "c",
+        "ffconf.h": "c",
+        "lib_timer.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": true
 }

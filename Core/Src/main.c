@@ -21,8 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "mod_dht11.h"
-#include "lib_usart.h"
+#include "task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -32,7 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define LOG_PATH   "0:/logs"
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -98,19 +97,64 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  /* USER CODE BEGIN 2 */
-  Mod_DHT11_Task();
-  /* USER CODE END 2 */
+
+  Lib_RTC_DateType date;
+  Mod_Oled_Pos_Type pos = {0, 0};
+  FATFS fs;
+
+  // SysTick 和 DWT
+  Lib_Tool_SysTick_Init(); // 毫秒延时
+  Lib_Tool_DWT_Init();     // 微妙计时
+  // RTC
+  Lib_RTC_Init();
+  // USART
+  Lib_USART_Init();
+  // OLED
+  Lib_I2C_Init();
+  Mod_Oled_Power_Up();
+  // DHT11
+  Mod_DHT11_GPIO_Init();
+  // FatFs
+  Check_FatFs(&fs);
+  f_unlink(FILE_PATH);
+  Log_Init();
+  // Timer
+  Lib_Timer_Init();
   
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+  LL_TIM_SetCounter(LIB_TIMER, 0);
+  LL_TIM_EnableCounter(LIB_TIMER);
   while (1)
   {
-    /* USER CODE END WHILE */
+    if (LIB_TIMER_CYCLE_FLAG == SET)
+    {
+      // 连续读取两次数据, 获得此时的温湿度数据
+      Real_Time_TempHumi = Mod_DHT11_Once_Com();
+      Lib_Tool_SysTick_Delay_ms(100); // 间隔 100ms, 采集数据
+      Real_Time_TempHumi = Mod_DHT11_Once_Com();
 
-    /* USER CODE BEGIN 3 */
+      // 获取时间
+      Lib_RTC_Unix2Date(Real_Time_TempHumi.timestamp, &date);
+      // 上位机显示
+      // Lib_USART_Send_String(Lib_Tool_Format_String("%d-%d-%d, %d:%d:%d\n", date.year, date.month, date.day, date.hour, date.minute, date.second));
+      // Lib_USART_Send_String(Lib_Tool_Format_String("Temperature: %d.%d\n", Real_Time_TempHumi.temp / 10, Lib_Tool_Abs(Real_Time_TempHumi.temp % 10)));
+      // Lib_USART_Send_String(Lib_Tool_Format_String("Humidity: %d.%d\n\n", Real_Time_TempHumi.humi / 10, Real_Time_TempHumi.humi % 10));
+      
+      // OLED 显示
+      Mod_Oled_Clear_Screen();
+      pos = (Mod_Oled_Pos_Type){0, 0};
+      pos = Mod_Oled_Show_String(pos, Lib_Tool_Format_String("%d-%d-%d", date.year, date.month, date.day));
+      pos = (Mod_Oled_Pos_Type){pos.page += 2, 0};
+      pos = Mod_Oled_Show_String(pos, Lib_Tool_Format_String("%d:%d:%d", date.hour, date.minute, date.second));
+      pos = (Mod_Oled_Pos_Type){pos.page += 2, 0};
+      pos = Mod_Oled_Show_String(pos, Lib_Tool_Format_String("Temp: %d.%d deg", Real_Time_TempHumi.temp / 10, Lib_Tool_Abs(Real_Time_TempHumi.temp % 10)));
+      pos = (Mod_Oled_Pos_Type){pos.page += 2, 0};
+      pos = Mod_Oled_Show_String(pos, Lib_Tool_Format_String("Humi: %d.%d%%", Real_Time_TempHumi.humi / 10, Real_Time_TempHumi.humi % 10));
+
+      Log_Apppend();
+
+      LIB_TIMER_CYCLE_FLAG = 0;
+    }
   }
-  /* USER CODE END 3 */
 }
 
 /**
