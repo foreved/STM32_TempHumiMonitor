@@ -1,6 +1,6 @@
 #include "task.h"
 
-static uint8_t LOG_APPEND_FLAG;
+// static uint8_t LOG_APPEND_FLAG;
 uint8_t LOG_SHOW_FLAG;
 
 void Check_FatFs(FATFS* fs)
@@ -65,7 +65,7 @@ void Log_Show(void)
   UINT fnum;
   static UINT fp = 0;
 
-  if (LOG_APPEND_FLAG == 0)
+  if (LIB_TIMER_CYCLE_FLAG == 0)
   {
     f_open(&file, FILE_PATH, FA_READ);
     f_lseek(&file, fp);
@@ -93,7 +93,7 @@ void Log_Apppend(void)
   const char* buffer;
 
   // 正在更新日志
-  LOG_APPEND_FLAG = 1;
+  // LOG_APPEND_FLAG = 1;
   (void)fres;
   fres = f_open(&file, FILE_PATH, FA_OPEN_EXISTING | FA_WRITE);
   fres = f_lseek(&file, f_size(&file));
@@ -101,7 +101,7 @@ void Log_Apppend(void)
   fres = f_write(&file, buffer, strlen(buffer), &fnum);
   f_close(&file);
   // 更新结束
-  LOG_APPEND_FLAG = 0;
+  // LOG_APPEND_FLAG = 0;
 }
 
 void Upload_Init(void)
