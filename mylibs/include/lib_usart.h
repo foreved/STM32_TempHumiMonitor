@@ -26,12 +26,13 @@
     #define LIB_USART_SUB_PRIORITY       0    // 子优先级
     #define LIB_USART_IT_RX_EN           1    // 是否启用接收中断
     #define Lib_USART_IT_Handler         USART1_IRQHandler  // USART1的中断服务函数
-    #define LIB_USART_BUFFER_MAXSIZE        100
-    extern uint8_t Lib_USART_Buffer[LIB_USART_BUFFER_MAXSIZE];  // USART的缓冲区, 需在main.c中定义为全局便量
 #endif
 
+#define LIB_USART_BUFFER_MAXSIZE        100
+extern uint8_t Lib_USART_Buffer[LIB_USART_BUFFER_MAXSIZE];  // USART的缓冲区, 需在main.c中定义为全局便量
+
 // DMA配置
-#define LIB_USART_DMA_EN             0        // 是否使用DMA
+#define LIB_USART_DMA_EN             1        // 是否使用DMA
 #if LIB_USART_DMA_EN
     #define LIB_USART_DMA                DMA1
     #define LIB_USART_DMA_CH             LL_DMA_CHANNEL_4     // USART1_TX对应通道
@@ -47,19 +48,6 @@
     #define LIB_USART_DMA_PDSIZE         LL_DMA_PDATAALIGN_BYTE     // 外设数据大小; 内存源数据大小
     #define LIB_USART_DMA_MDSIZE         LL_DMA_PDATAALIGN_BYTE     // 内存数据大小; 内存目标数据大小
     #define LIB_USART_DMA_NDATA          LIB_USART_BUFFER_MAXSIZE   // 输出数据的数量
-#endif
-
-// 指令
-#define LIB_USART_CMD_EN                 0         // 是否启用指令模式
-#if LIB_USART_CMD_EN
-    #include "lib_rtc.h"
-    extern uint8_t Lib_USART_CMD_Status1;
-    extern uint8_t Lib_USART_CMD_Status2;
-    extern uint32_t Lib_USART_CMD_Data;
-    #define LIB_USART_CMD_ACK                0xFF      // mcu 回复 pc
-    #define LIB_USART_CMD_START              0x01      // 开启指令模式
-    #define LIB_USART_CMD_STOP               0x02      // 关闭指令模式
-    #define LIB_USART_CMD_RTC_UNIX           0x03      // 配置 RTC 时间戳
 #endif
 
 void Lib_USART_Init(void);

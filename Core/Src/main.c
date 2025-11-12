@@ -31,7 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define LOG_PATH   "0:/logs"
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -118,6 +118,7 @@ int main(void)
   Check_FatFs(&fs);
   f_unlink(FILE_PATH);
   Log_Init();
+  Upload_Init();
   // Timer
   Lib_Timer_Init();
   
@@ -153,6 +154,11 @@ int main(void)
       Log_Apppend();
 
       LIB_TIMER_CYCLE_FLAG = 0;
+    }
+
+    if (LOG_SHOW_FLAG == SET)
+    {
+      Log_Show();
     }
   }
 }

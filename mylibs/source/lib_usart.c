@@ -1,6 +1,8 @@
 #include "lib_usart.h"
 #include <stdarg.h>
 
+uint8_t Lib_USART_Buffer[LIB_USART_BUFFER_MAXSIZE];
+
 void Lib_USART_Init(void)
 {
   LL_GPIO_InitTypeDef gpio_config = {0};
@@ -65,6 +67,7 @@ void Lib_USART_Init(void)
     dma_config.MemoryOrM2MDstDataSize = LIB_USART_DMA_MDSIZE;
     dma_config.NbData = LIB_USART_DMA_NDATA;
     LL_DMA_Init(LIB_USART_DMA, LIB_USART_DMA_CH, &dma_config);
+    // LIB_USART_DMA_CH_EN();
     // 允许USART_TX发起DMA请求
     LL_USART_EnableDMAReq_TX(LIB_USART);
   #endif
@@ -316,57 +319,13 @@ void Lib_USART_Send_fString(const char * str, ...)
 }
 
 #if LIB_USART_IT_EN
-  uint8_t Lib_USART_Buffer[LIB_USART_BUFFER_MAXSIZE];
-  #if LIB_USART_CMD_EN
-    uint8_t Lib_USART_CMD_Status1;        // bit 0: 是否进入指令模式, bit 1: 是否使用缓冲区
-    uint8_t Lib_USART_CMD_Status2;        // bit 2: 0x03
-    uint32_t Lib_USART_CMD_Data;
-    void Lib_USART_IT_Handler(void)
+  void Lib_USART_IT_Handler(void)
+  {
+    uint8_t tmp = 0;
+    if (LL_USART_IsActiveFlag_RXNE(LIB_USART) == SET)
     {
-      uint8_t data = 0;
-      if (LL_USART_IsActiveFlag_RXNE(LIB_USART) == SET)
-      {
-        data = LL_USART_ReceiveData8(LIB_USART);
-        if ((Lib_USART_CMD_Status1 & 0x02))
-        {
-
-        }
-
-        if ((Lib_USART_CMD_Status1 & 0x01))
-        {
-          if ()
-          switch (data)
-          {
-            case LIB_USART_CMD_STOP:
-              Lib_USART_CMD_Status1 &= ~0x01;
-              Lib_USART_CMD_Status2 = 0;
-              break;
-            case LIB_USART_CMD_RTC_UNIX:
-              Lib_USART_CMD_Status2 |= 0x03;
-              break;
-          }
-        }
-        else
-        {
-          swtich (data)
-          {
-            case LIB_USART_CMD_START:
-              Lib_USART_CMD_Status1 |= 0x01;
-              break;
-          }
-        }
-        Lib_USART_Send_Byte(LIB_USART_CMD_ACK);
-      }
+      tmp = LL_USART_ReceiveData8(LIB_USART);
+      Lib_USART_Send_fString("RX IT: %x\n", tmp);
     }
-  #else
-    void Lib_USART_IT_Handler(void)
-    {
-      uint8_t tmp = 0;
-      if (LL_USART_IsActiveFlag_RXNE(LIB_USART) == SET)
-      {
-        tmp = LL_USART_ReceiveData8(LIB_USART);
-        Lib_USART_Send_fString("RX IT: %x\n", tmp);
-      }
-    }
-  #endif
+  }
 #endif

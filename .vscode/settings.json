@@ -10,7 +10,9 @@
         "mod_flash.h": "c",
         "ff.h": "c",
         "ffconf.h": "c",
-        "lib_timer.h": "c"
+        "lib_timer.h": "c",
+        "stdarg.h": "c",
+        "task.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": true
 }
