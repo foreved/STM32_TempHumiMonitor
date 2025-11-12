@@ -12,7 +12,8 @@
         "ffconf.h": "c",
         "lib_timer.h": "c",
         "stdarg.h": "c",
-        "task.h": "c"
+        "task.h": "c",
+        "stm32f1xx_ll_exti.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": true
 }
